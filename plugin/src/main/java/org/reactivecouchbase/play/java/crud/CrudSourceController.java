@@ -1,4 +1,4 @@
-package org.ancelin.play2.java.couchbase.crud;
+package org.reactivecouchbase.play.java.crud;
 
 import com.couchbase.client.protocol.views.ComplexKey;
 import com.couchbase.client.protocol.views.Query;

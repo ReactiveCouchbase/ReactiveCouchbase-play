@@ -1,6 +1,6 @@
-package org.ancelin.play2.java.couchbase;
+package org.reactivecouchbase.play.java;
 
-import org.ancelin.play2.couchbase.CouchbasePlugin;
+import org.reactivecouchbase.play.plugins.CouchbasePlugin;
 import play.Play;
 import play.api.PlayException;
 import play.libs.F;
@@ -24,9 +24,9 @@ public class Couchbase {
 
     public static Map<String, CouchbaseBucket> buckets() {
         if (bucketsCache.isEmpty()) {
-            Iterator<Tuple2<String,org.ancelin.play2.couchbase.CouchbaseBucket>> iterator = plugin().buckets().iterator();
+            Iterator<Tuple2<String, org.reactivecouchbase.CouchbaseBucket>> iterator = plugin().buckets().iterator();
             while(iterator.hasNext()) {
-                Tuple2<String,org.ancelin.play2.couchbase.CouchbaseBucket> tuple = iterator.next();
+                Tuple2<String, org.reactivecouchbase.CouchbaseBucket> tuple = iterator.next();
                 bucketsCache.put(tuple._1(), new CouchbaseBucket(tuple._2()));
             }
         }
@@ -34,7 +34,7 @@ public class Couchbase {
     }
 
     public static CouchbaseBucket bucket(String name) {
-        Option<org.ancelin.play2.couchbase.CouchbaseBucket> opt = plugin().buckets().get(name);
+        Option<org.reactivecouchbase.CouchbaseBucket> opt = plugin().buckets().get(name);
         if (opt.isDefined()) {
             return new CouchbaseBucket(opt.get());
         }
@@ -42,7 +42,7 @@ public class Couchbase {
     }
 
     public static CouchbaseBucket defaultBucket() {
-        Option<Tuple2<String,org.ancelin.play2.couchbase.CouchbaseBucket>> tuple2Option = plugin().buckets().headOption();
+        Option<Tuple2<String,org.reactivecouchbase.CouchbaseBucket>> tuple2Option = plugin().buckets().headOption();
         if (tuple2Option.isDefined()) {
             return new CouchbaseBucket(tuple2Option.get()._2());
         }

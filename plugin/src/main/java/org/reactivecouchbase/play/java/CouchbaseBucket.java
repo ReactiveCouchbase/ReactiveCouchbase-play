@@ -1,29 +1,31 @@
-package org.ancelin.play2.java.couchbase;
+package org.reactivecouchbase.play.java;
 
 import com.couchbase.client.protocol.views.Query;
 import com.couchbase.client.protocol.views.View;
 import net.spy.memcached.PersistTo;
 import net.spy.memcached.ReplicateTo;
 import net.spy.memcached.ops.OperationStatus;
-import org.ancelin.play2.couchbase.Couchbase$;
-import play.Play;
+import org.reactivecouchbase.Couchbase$;
+import org.reactivecouchbase.client.Row;
 import play.libs.F;
 import play.libs.F.Promise;
 import play.libs.Json;
 import scala.concurrent.ExecutionContext;
 
 import java.util.Collection;
+import java.util.List;
 
 
 public class CouchbaseBucket {
 
-    public final org.ancelin.play2.couchbase.CouchbaseBucket client;
+    public final org.reactivecouchbase.CouchbaseBucket client;
 
     private final Couchbase$ couchbase = Couchbase$.MODULE$;
-    private final ExecutionContext ec = couchbase.couchbaseExecutor(Play.application().getWrappedApplication());
+    private final ExecutionContext ec;
 
-    CouchbaseBucket(org.ancelin.play2.couchbase.CouchbaseBucket client) {
+    CouchbaseBucket(org.reactivecouchbase.CouchbaseBucket client) {
         this.client = client;
+        this.ec = client.driver().executor();
     }
 
     public <T> Promise<Collection<T>> find(String docName, String viewName, Query query, Class<T> clazz) {
@@ -51,7 +53,15 @@ public class CouchbaseBucket {
     }
 
     public <T> Promise<F.Option<T>> getOpt(String key, Class<T> clazz) {
-        return Promise.wrap(couchbase.javaOptGet(key, clazz, client, ec));
+        return Promise.wrap(couchbase.javaOptGet(key, clazz, client, ec)).map(new F.Function<List<T>, F.Option<T>>() {
+            @Override
+            public F.Option<T> apply(List<T> ts) throws Throwable {
+                if (ts.isEmpty()) {
+                    return F.Option.None();
+                }
+                return F.Option.Some(ts.iterator().next());
+            }
+        });
     }
 
     public Promise<OperationStatus> incr(String key, Integer of) {

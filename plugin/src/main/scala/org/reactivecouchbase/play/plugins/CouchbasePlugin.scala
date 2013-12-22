@@ -1,9 +1,10 @@
-package org.reactivecouchbase.play
+package org.reactivecouchbase.play.plugins
 
 import play.api._
 import com.typesafe.config.ConfigObject
 import collection.JavaConversions._
 import org.reactivecouchbase.{ReactiveCouchbaseDriver, CouchbaseBucket}
+import org.reactivecouchbase.play.PlayCouchbase
 
 // TODO : plug with couchbase support from core
 class CouchbasePlugin(implicit app: Application) extends Plugin {
@@ -27,7 +28,7 @@ class CouchbasePlugin(implicit app: Application) extends Plugin {
   }
   private def connect(config: ConfigObject) {
     val bucket = config.get("bucket").unwrapped().asInstanceOf[String]
-    val hosts = config.get("host").unwrapped() match {
+    val hosts: List[String] = config.get("host").unwrapped() match {
       case s: String => List(s)
       case a: java.util.ArrayList[String] => a.toList
     }
@@ -36,7 +37,7 @@ class CouchbasePlugin(implicit app: Application) extends Plugin {
     val user = config.get("user").unwrapped().asInstanceOf[String]
     val pass = config.get("pass").unwrapped().asInstanceOf[String]
     val timeout = config.get("timeout").unwrapped().asInstanceOf[String].toLong
-    val couchbase: CouchbaseBucket = driver.bucket(hosts.toList, port, base, bucket, user, pass, timeout)
+    val couchbase: CouchbaseBucket = driver.bucket(hosts, port, base, bucket, user, pass, timeout)
     logger.info(s"""Connection to bucket "${bucket}" ...""")
     buckets = buckets + (bucket -> couchbase.connect())
   }

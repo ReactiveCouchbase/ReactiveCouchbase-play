@@ -5,7 +5,8 @@ import play.api._
 import scala.concurrent.ExecutionContext
 import akka.actor.ActorSystem
 import org.reactivecouchbase.{RCLogger, LoggerLike, CouchbaseBucket}
-import org.reactivecouchbase.client.{CappedBucket}
+import org.reactivecouchbase.play.plugins.CouchbasePlugin
+import org.reactivecouchbase.client.CappedBucket
 
 object PlayCouchbase {
 
@@ -23,8 +24,11 @@ object PlayCouchbase {
   }
 
   def bucket(bucket: String)(implicit app: Application): CouchbaseBucket = buckets(app).get(bucket).getOrElse(throw new PlayException(s"Error with bucket $bucket", s"Bucket '$bucket' is not defined"))
-  def cappedBucket(bucket: String, max: Int, reaper: Boolean = true)(implicit app: Application): CappedBucket =
-    buckets(app).get(bucket).map(_ => CappedBucket(bucket, max, reaper)(app)).getOrElse(throw new PlayException(s"Error with bucket $bucket", s"Bucket '$bucket' is not defined"))
+  def cappedBucket(bucket: String, max: Int, reaper: Boolean = true)(implicit app: Application): CappedBucket = {
+    buckets(app).get(bucket).map { bucket =>
+      CappedBucket(bucket, bucket.driver.executor(), max, reaper)
+    }.getOrElse(throw new PlayException(s"Error with bucket $bucket", s"Bucket '$bucket' is not defined"))
+  }
   def client(bucket: String)(implicit app: Application): CouchbaseClient = buckets(app).get(bucket).flatMap(_.client).getOrElse(throw new PlayException(s"Error with bucket $bucket", s"Bucket '$bucket' is not defined or client is not connected"))
 
   def buckets(implicit app: Application): Map[String, CouchbaseBucket] = app.plugin[CouchbasePlugin] match {

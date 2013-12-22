@@ -1,12 +1,12 @@
-package org.ancelin.play2.java.couchbase.crud;
+package org.reactivecouchbase.play.java.crud;
 
 import com.couchbase.client.protocol.views.Query;
 import com.couchbase.client.protocol.views.View;
-import net.spy.memcached.ops.OperationStatus;
-import org.ancelin.play2.java.couchbase.CouchbaseBucket;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import net.spy.memcached.ops.OperationStatus;
+import org.reactivecouchbase.play.java.CouchbaseBucket;
 import play.libs.F;
 import play.libs.Json;
 

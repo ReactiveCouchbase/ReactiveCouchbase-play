@@ -8,20 +8,17 @@ import play.api.mvc._
 import org.reactivecouchbase.{CouchbaseRWImplicits, Couchbase, CouchbaseBucket}
 import java.util.UUID
 import play.core.Router
-import scala.Some
 import play.api.libs.json.JsObject
 import org.reactivecouchbase.client.TypedRow
-import org.reactivecouchbase.play.PlayCouchbase
 
 // Higly inspired (not to say copied ;)) from https://github.com/mandubian/play-autosource
 class CouchbaseCrudSource[T:Format](bucket: CouchbaseBucket, idKey: String = "_id") {
 
   import org.reactivecouchbase.CouchbaseRWImplicits._
-  import play.api.Play.current
 
   val reader: Reads[T] = implicitly[Reads[T]]
   val writer: Writes[T] = implicitly[Writes[T]]
-  implicit val ctx: ExecutionContext = PlayCouchbase.couchbaseExecutor
+  implicit val ctx: ExecutionContext = bucket.driver.executor()
 
   def insert(t: T): Future[String] = {
     val id: String = UUID.randomUUID().toString
@@ -212,9 +209,7 @@ abstract class CrudRouterController(implicit idBindable: PathBindable[String])
   }
 }
 
-abstract class CouchbaseCrudSourceController[T:Format] extends CrudRouterController {
-
-  import play.api.Play.current
+abstract class CouchbaseCrudSourceController[T](implicit ctx: ExecutionContext, format: Format[T], app: play.api.Application) extends CrudRouterController {
 
   def bucket: CouchbaseBucket
   def defaultDesignDocname = ""
@@ -223,7 +218,7 @@ abstract class CouchbaseCrudSourceController[T:Format] extends CrudRouterControl
 
   lazy val res = new CouchbaseCrudSource[T](bucket, idKey)
 
-  implicit val ctx = PlayCouchbase.couchbaseExecutor
+  //implicit val ctx = PlayCouchbase.couchbaseExecutor
 
   val writerWithId = Writes[(T, String)] {
     case (t, id) => {
@@ -236,7 +231,7 @@ abstract class CouchbaseCrudSourceController[T:Format] extends CrudRouterControl
   }
 
   def docName(name: String) = {
-    if (play.api.Play.isDev(play.api.Play.current)) s"dev_$name" else name
+    if (play.api.Play.isDev(app)) s"dev_$name" else name
   }
 
   def insert: EssentialAction = Action.async(parse.json) { request =>

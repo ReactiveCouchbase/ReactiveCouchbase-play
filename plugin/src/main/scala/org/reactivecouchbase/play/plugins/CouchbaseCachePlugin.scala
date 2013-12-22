@@ -17,7 +17,7 @@ class CouchbaseCachePlugin(app: Application) extends CachePlugin {
       override protected def deserialize(data: Array[Byte]): java.lang.Object = {
         new java.io.ObjectInputStream(new java.io.ByteArrayInputStream(data)) {
           override protected def resolveClass(desc: ObjectStreamClass) = {
-            Class.forName(desc.getName(), false, play.api.Play.current.classloader)
+            Class.forName(desc.getName(), false, app.classloader)
           }
         }.readObject()
       }

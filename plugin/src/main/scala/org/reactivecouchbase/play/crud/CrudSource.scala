@@ -209,7 +209,7 @@ abstract class CrudRouterController(implicit idBindable: PathBindable[String])
   }
 }
 
-abstract class CouchbaseCrudSourceController[T](implicit ctx: ExecutionContext, format: Format[T], app: play.api.Application) extends CrudRouterController {
+abstract class CouchbaseCrudSourceController[T](implicit format: Format[T], app: play.api.Application) extends CrudRouterController {
 
   def bucket: CouchbaseBucket
   def defaultDesignDocname = ""
@@ -218,7 +218,7 @@ abstract class CouchbaseCrudSourceController[T](implicit ctx: ExecutionContext, 
 
   lazy val res = new CouchbaseCrudSource[T](bucket, idKey)
 
-  //implicit val ctx = PlayCouchbase.couchbaseExecutor
+  lazy implicit val ctx = bucket.driver.executor()
 
   val writerWithId = Writes[(T, String)] {
     case (t, id) => {

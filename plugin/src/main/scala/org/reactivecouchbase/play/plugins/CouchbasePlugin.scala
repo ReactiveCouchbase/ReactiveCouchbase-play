@@ -6,7 +6,6 @@ import collection.JavaConversions._
 import org.reactivecouchbase.{ReactiveCouchbaseDriver, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
 
-// TODO : plug with couchbase support from core
 class CouchbasePlugin(implicit app: Application) extends Plugin {
 
   val logger = Logger("ReactiveCouchbasePlugin")

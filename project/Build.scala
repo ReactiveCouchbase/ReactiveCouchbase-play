@@ -1,5 +1,6 @@
 import sbt._
 import Keys._
+import play.Project._
 
 object ApplicationBuild extends Build {
 
@@ -29,7 +30,12 @@ object ApplicationBuild extends Build {
       publishLocal := {},
       publish := {}
     ).aggregate(
-      plugin
+      plugin,
+      N1QLSample,
+      ESSample,
+      PersonsSample,
+      ShortURLsSample,
+      JavaShortUrlsSample
     )
 
   lazy val plugin = Project(appName, base = file("plugin"))
@@ -49,4 +55,72 @@ object ApplicationBuild extends Build {
       publishArtifact in Test := false,
       pomIncludeRepository := { _ => false }
     )
+
+    lazy val N1QLSample = play.Project(
+      "scala-n1ql-sample",
+      path = file("samples/scala/n1ql")
+    ).settings(
+      scalaVersion := appScalaVersion,
+      scalaBinaryVersion := appScalaBinaryVersion,
+      crossScalaVersions := appScalaCrossVersions,
+      crossVersion := CrossVersion.full,
+      parallelExecution in Test := false,
+      publishLocal := {},
+      publish := {}
+    ).dependsOn(plugin)
+
+    lazy val ESSample = play.Project(
+      "scala-es-sample",
+      path = file("samples/scala/orders")
+    ).settings(
+      scalaVersion := appScalaVersion,
+      scalaBinaryVersion := appScalaBinaryVersion,
+      crossScalaVersions := appScalaCrossVersions,
+      crossVersion := CrossVersion.full,
+      parallelExecution in Test := false,
+      publishLocal := {},
+      publish := {},
+      libraryDependencies += "com.typesafe.play" %% "play-java" % "2.2.0" % "provided"
+    ).dependsOn(plugin)
+
+    lazy val PersonsSample = play.Project(
+      "scala-persons-sample",
+      path = file("samples/scala/persons")
+    ).settings(
+      scalaVersion := appScalaVersion,
+      scalaBinaryVersion := appScalaBinaryVersion,
+      crossScalaVersions := appScalaCrossVersions,
+      crossVersion := CrossVersion.full,
+      parallelExecution in Test := false,
+      publishLocal := {},
+      publish := {}
+    ).dependsOn(plugin)
+
+    lazy val ShortURLsSample = play.Project(
+      "scala-shorturls-sample",
+      path = file("samples/scala/shorturls")
+    ).settings(
+      scalaVersion := appScalaVersion,
+      scalaBinaryVersion := appScalaBinaryVersion,
+      crossScalaVersions := appScalaCrossVersions,
+      crossVersion := CrossVersion.full,
+      parallelExecution in Test := false,
+      publishLocal := {},
+      publish := {}
+    ).dependsOn(plugin)
+
+    lazy val JavaShortUrlsSample = play.Project(
+      "java-shorturls-sample",
+      path = file("samples/java/shorturls")
+    ).settings(
+      scalaVersion := appScalaVersion,
+      scalaBinaryVersion := appScalaBinaryVersion,
+      crossScalaVersions := appScalaCrossVersions,
+      crossVersion := CrossVersion.full,
+      parallelExecution in Test := false,
+      publishLocal := {},
+      publish := {},
+      libraryDependencies += "com.typesafe.play" %% "play-java" % "2.2.0" % "provided",
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.1-SNAPSHOT"
+    ).dependsOn(plugin)
 }

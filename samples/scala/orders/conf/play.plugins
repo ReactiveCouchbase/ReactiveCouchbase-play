@@ -1,0 +1,2 @@
+400:org.reactivecouchbase.play.plugins.CouchbasePlugin
+500:org.reactivecouchbase.play.plugins.CouchbaseCachePlugin

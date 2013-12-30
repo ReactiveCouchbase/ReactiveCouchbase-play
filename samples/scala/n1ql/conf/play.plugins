@@ -1,0 +1,2 @@
+400:org.reactivecouchbase.play.plugins.CouchbasePlugin
+1000:org.reactivecouchbase.play.plugins.CouchbaseN1QLPlugin

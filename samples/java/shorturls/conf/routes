@@ -1,0 +1,28 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index()
+
+GET     /urls/                      @controllers.ShortURLController.find()
+POST    /urls/                      @controllers.ShortURLController.insert()
+POST    /urls/find                  @controllers.ShortURLController.find()
+POST    /urls/batch                 @controllers.ShortURLController.batchInsert()
+PUT     /urls/batch                 @controllers.ShortURLController.batchUpdate()
+DELETE  /urls/batch                 @controllers.ShortURLController.batchDelete()
+PUT     /urls/:id/partial           @controllers.ShortURLController.updatePartial(id)
+GET     /urls/:id                   @controllers.ShortURLController.get(id)
+DELETE  /urls/:id                   @controllers.ShortURLController.delete(id)
+PUT     /urls/:id                   @controllers.ShortURLController.update(id)
+
+GET     /api/urls/:id               controllers.ApiController.getUrl(id)
+DELETE  /api/urls/:id               controllers.ApiController.delete(id)
+GET     /api/urls                   controllers.ApiController.getAllUrls()
+POST    /api/urls                   controllers.ApiController.createUrl()
+
+GET     /:id                        controllers.Application.goTo(id)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -18,7 +18,7 @@ object ApplicationBuild extends Build {
 
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
-    resolvers += "ancelin" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
+    resolvers += "ReactiveCouchbase" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
   )
 
 }

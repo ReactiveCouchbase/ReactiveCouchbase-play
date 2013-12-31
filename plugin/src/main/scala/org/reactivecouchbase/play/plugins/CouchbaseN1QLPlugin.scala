@@ -27,6 +27,6 @@ object CouchbaseN1QLPlugin {
       case Some(plugin) => plugin
       case _ => throw new PlayException("CouchbasePlugin Error", "Cannot find an instance of CouchbasePlugin.")
     }
-    CouchbaseN1QL.N1QL(query, N1QLPlugin.host, N1QLPlugin.port, PlayCouchbasePlugin.driver)
+    CouchbaseN1QL.N1QL(query, N1QLPlugin.host, N1QLPlugin.port)
   }
 }

@@ -13,7 +13,7 @@ object ApplicationBuild extends Build {
     javaJdbc,
     javaEbean,
     cache,
-    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.1-SNAPSHOT"
+    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.1"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

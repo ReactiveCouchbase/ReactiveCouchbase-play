@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "ReactiveCouchbase-play"
-  val appVersion      = "0.1"
+  val appVersion      = "0.2-SNAPSHOT"
   val appScalaVersion = "2.10.2"
   val appScalaBinaryVersion = "2.10"
   val appScalaCrossVersions = Seq("2.10.2")

@@ -16,7 +16,7 @@ object PlayCouchbase {
   private[reactivecouchbase] val connectMessage = "The CouchbasePlugin doesn't seems to be connected to a Couchbase server. Maybe an error occured!"
 
   private[reactivecouchbase] val couchbaseActorSystem = ActorSystem("reactivecouchbase-plugin-system")
-  private[reactivecouchbase] val loggerFacade = PlayLogger
+  private[reactivecouchbase] val loggerFacade = PlayLogger.logger("ReactiveCouchbase")
 
   def defaultBucket(implicit app: Application): CouchbaseBucket = app.plugin[CouchbasePlugin] match {
     case Some(plugin) => plugin.buckets.headOption.getOrElse(throw new PlayException("CouchbasePlugin Error", connectMessage))._2

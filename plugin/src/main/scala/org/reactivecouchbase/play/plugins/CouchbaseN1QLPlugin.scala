@@ -2,7 +2,7 @@ package org.reactivecouchbase.play.plugins
 
 import play.api.{PlayException, Plugin, Application, Play}
 import scala.Some
-import org.reactivecouchbase.{CouchbaseN1QL, N1QLQuery}
+import org.reactivecouchbase._
 
 class CouchbaseN1QLPlugin(app: Application) extends Plugin {
 
@@ -17,7 +17,7 @@ class CouchbaseN1QLPlugin(app: Application) extends Plugin {
 
 object CouchbaseN1QLPlugin {
 
-  def N1QL(query: String)(implicit app: Application): N1QLQuery = {
+  def N1QL(query: String)(implicit app: Application, bucket: CouchbaseBucket): N1QLQuery = {
     lazy val N1QLPlugin = app.plugin[CouchbaseN1QLPlugin] match {
       case Some(plugin) => plugin
       case _ => throw new PlayException("CouchbaseN1QLPlugin Error", "Cannot find an instance of CouchbaseN1QLPlugin.")
@@ -27,6 +27,6 @@ object CouchbaseN1QLPlugin {
       case Some(plugin) => plugin
       case _ => throw new PlayException("CouchbasePlugin Error", "Cannot find an instance of CouchbasePlugin.")
     }
-    CouchbaseN1QL.N1QL(query, N1QLPlugin.host, N1QLPlugin.port)
+    CouchbaseN1QL.N1QL(bucket, query, N1QLPlugin.host, N1QLPlugin.port)
   }
 }

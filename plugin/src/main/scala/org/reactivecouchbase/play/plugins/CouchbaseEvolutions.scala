@@ -140,7 +140,7 @@ class CouchbaseEvolutionsPlugin(app: Application) extends Plugin {
 
   def lock(attempts: Int = 5)(implicit bucket: CouchbaseBucket, ec:ExecutionContext) {
     try {
-      logger.debug(s"Attempting to acquire lock for couchbase evolutions on bucket ${bucket.bucket}...")
+      logger.debug(s"Attempting to acquire lock for couchbase evolutions on bucket ${bucket.alias}...")
 
       val maybe = Await.result(Couchbase.get[JsValue]("couchbase_evolution_lock"), Duration(1, TimeUnit.SECONDS))
 
@@ -164,24 +164,24 @@ class CouchbaseEvolutionsPlugin(app: Application) extends Plugin {
   }
 
   def unlock()(implicit bucket: CouchbaseBucket, ec:ExecutionContext) {
-    logger.debug(s"Attempting to release lock for couchbase evolutions on bucket ${bucket.bucket}...")
+    logger.debug(s"Attempting to release lock for couchbase evolutions on bucket ${bucket.alias}...")
     Await.result(Couchbase.delete("couchbase_evolution_lock"), Duration(1, TimeUnit.SECONDS))
     logger.debug("unlocked!")
   }
 }
 
 case class LockedEvolution(bucket:CouchbaseBucket) extends PlayException.RichDescription(
-  s"Bucket ${bucket.bucket} locked",
+  s"Bucket ${bucket.alias} locked",
   "Exception while attempting to lock couchbase evolutions (other node probably has lock)"
   ) {
 
-  def subTitle(): String = s"Bucket ${bucket.bucket} locked"
+  def subTitle(): String = s"Bucket ${bucket.alias} locked"
 
   def content(): String = "Exception while attempting to lock couchbase evolutions (other node probably has lock)"
 
   def htmlDescription(): String = {
 
-    <span>Unable to run couchbase evolution on bucket {bucket.bucket}</span>
+    <span>Unable to run couchbase evolution on bucket {bucket.alias}</span>
 
   }.mkString
 }

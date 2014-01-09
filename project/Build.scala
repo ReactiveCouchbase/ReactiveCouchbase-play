@@ -43,8 +43,8 @@ object ApplicationBuild extends Build {
     .settings(
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
       resolvers += "Spy Repository" at "http://files.couchbase.com/maven2",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.1-SNAPSHOT",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.1-SNAPSHOT",
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.2-SNAPSHOT",
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.2-SNAPSHOT",
       libraryDependencies += "com.typesafe.play" %% "play" % "2.2.0" % "provided",
       libraryDependencies += "com.typesafe.play" %% "play-cache" % "2.2.0",
       libraryDependencies += "com.typesafe.play" %% "play-test" % "2.2.0" % "test",
@@ -80,7 +80,7 @@ object ApplicationBuild extends Build {
       parallelExecution in Test := false,
       publishLocal := {},
       publish := {},
-      libraryDependencies += "com.typesafe.play" %% "play-java" % "2.2.0" % "provided"
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.2-SNAPSHOT"
     ).dependsOn(plugin)
 
     lazy val PersonsSample = play.Project(
@@ -120,7 +120,6 @@ object ApplicationBuild extends Build {
       parallelExecution in Test := false,
       publishLocal := {},
       publish := {},
-      libraryDependencies += "com.typesafe.play" %% "play-java" % "2.2.0" % "provided",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.1-SNAPSHOT"
+      libraryDependencies += "com.typesafe.play" %% "play-java" % "2.2.0" % "provided"
     ).dependsOn(plugin)
 }

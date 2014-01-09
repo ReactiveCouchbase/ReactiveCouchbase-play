@@ -26,18 +26,20 @@ class CouchbasePlugin(implicit app: Application) extends Plugin {
     logger.info("Starting ReactiveCouchbase plugin done, have fun !!!")
   }
   private def connect(config: ConfigObject) {
-    val bucket = config.get("bucket").unwrapped().asInstanceOf[String]
     val hosts: List[String] = config.get("host").unwrapped() match {
       case s: String => List(s)
       case a: java.util.ArrayList[String] => a.toList
     }
-    val port = config.get("port").unwrapped().asInstanceOf[String]
-    val base = config.get("base").unwrapped().asInstanceOf[String]
-    val user = config.get("user").unwrapped().asInstanceOf[String]
-    val pass = config.get("pass").unwrapped().asInstanceOf[String]
-    val timeout = config.get("timeout").unwrapped().asInstanceOf[String].toLong
-    val couchbase: CouchbaseBucket = driver.bucket(hosts, port, base, bucket, user, pass, timeout)
-    logger.info(s"""Connection to bucket "${bucket}" ...""")
+    val configuration = new Configuration(config.toConfig)
+    val bucket = configuration.getString("bucket").getOrElse("default") //config.get("bucket").unwrapped().asInstanceOf[String]
+    val alias = configuration.getString("alias").getOrElse(bucket) //config.get("alias").unwrapped().asInstanceOf[String]
+    val port = configuration.getString("port").getOrElse("8091") //config.get("port").unwrapped().asInstanceOf[String]
+    val base = configuration.getString("base").getOrElse("pools") //config.get("base").unwrapped().asInstanceOf[String]
+    val user = configuration.getString("user").getOrElse("") //config.get("user").unwrapped().asInstanceOf[String]
+    val pass = configuration.getString("pass").getOrElse("") //config.get("pass").unwrapped().asInstanceOf[String]
+    val timeout = configuration.getLong("timeout").getOrElse(1000L) //config.get("timeout").unwrapped().asInstanceOf[String].toLong
+    val couchbase: CouchbaseBucket = driver.bucket(hosts, port, base, bucket, alias, user, pass, timeout)
+    logger.info(s"""Connection to bucket "${alias}" ...""")
     buckets = buckets + (bucket -> couchbase.connect())
   }
   override def onStop {

@@ -40,7 +40,7 @@ class CouchbasePlugin(implicit app: Application) extends Plugin {
     val timeout = configuration.getLong("timeout").getOrElse(1000L) //config.get("timeout").unwrapped().asInstanceOf[String].toLong
     val couchbase: CouchbaseBucket = driver.bucket(hosts, port, base, bucket, alias, user, pass, timeout)
     logger.info(s"""Connection to bucket "${alias}" ...""")
-    buckets = buckets + (bucket -> couchbase.connect())
+    buckets = buckets + (alias -> couchbase.connect())
   }
   override def onStop {
     logger.info("ReactiveCouchbase plugin shutdown, disconnecting all buckets ...")

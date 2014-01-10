@@ -12,7 +12,12 @@ class CouchbasePlugin(implicit app: Application) extends Plugin {
   val driver = ReactiveCouchbaseDriver.apply(
     PlayCouchbase.couchbaseActorSystem,
     new org.reactivecouchbase.Configuration(Play.configuration(app).underlying),
-    PlayCouchbase.loggerFacade
+    PlayCouchbase.loggerFacade,
+    app.mode match {
+      case Mode.Dev => org.reactivecouchbase.Dev()
+      case Mode.Test => org.reactivecouchbase.Test()
+      case Mode.Prod => org.reactivecouchbase.Prod()
+    }
   )
   var buckets: Map[String, CouchbaseBucket] = Map[String, CouchbaseBucket]()
   override def onStart {

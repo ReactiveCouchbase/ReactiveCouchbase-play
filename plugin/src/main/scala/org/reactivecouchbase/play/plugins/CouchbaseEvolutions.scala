@@ -12,6 +12,9 @@ import net.spy.memcached.ops.OperationStatus
 import org.reactivecouchbase.{Couchbase, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
 
+/**
+ * @author : Didier Bathily - https://github.com/dbathily
+ */
 case class DocumentDescription(fileName:String, bucket:CouchbaseBucket , bytes:Array[Byte]) {
 
   lazy val hash = Codecs.sha1(bytes)

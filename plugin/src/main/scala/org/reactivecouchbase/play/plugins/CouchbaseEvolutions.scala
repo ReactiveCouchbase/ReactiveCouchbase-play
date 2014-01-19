@@ -13,7 +13,7 @@ import org.reactivecouchbase.{Couchbase, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
 
 /**
- * @author : Didier Bathily - https://github.com/dbathily
+ * @author Didier Bathily - https://github.com/dbathily
  */
 case class DocumentDescription(fileName:String, bucket:CouchbaseBucket , bytes:Array[Byte]) {
 

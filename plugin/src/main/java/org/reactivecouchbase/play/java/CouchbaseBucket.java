@@ -23,7 +23,7 @@ public class CouchbaseBucket {
     private final Couchbase$ couchbase = Couchbase$.MODULE$;
     private final ExecutionContext ec;
 
-    CouchbaseBucket(org.reactivecouchbase.CouchbaseBucket client) {
+    public CouchbaseBucket(org.reactivecouchbase.CouchbaseBucket client) {
         this.client = client;
         this.ec = client.driver().executor();
     }

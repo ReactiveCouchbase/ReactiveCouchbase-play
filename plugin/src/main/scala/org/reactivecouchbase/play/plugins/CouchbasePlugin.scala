@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigObject
 import collection.JavaConversions._
 import org.reactivecouchbase.{ReactiveCouchbaseDriver, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
+import org.reactivecouchbase.client.CappedBucket
 
 class CouchbasePlugin(implicit app: Application) extends Plugin {
 
@@ -51,6 +52,7 @@ class CouchbasePlugin(implicit app: Application) extends Plugin {
     logger.info("ReactiveCouchbase plugin shutdown, disconnecting all buckets ...")
     buckets.foreach { tuple => tuple._2.disconnect() }
     buckets = buckets.empty
+    CappedBucket.clearCache()
     logger.info("ReactiveCouchbase plugin shutdown done.")
   }
 }

@@ -50,7 +50,8 @@ class CouchbasePlugin(implicit app: Application) extends Plugin {
   }
   override def onStop {
     logger.info("ReactiveCouchbase plugin shutdown, disconnecting all buckets ...")
-    buckets.foreach { tuple => tuple._2.disconnect() }
+    //buckets.foreach { tuple => tuple._2.disconnect() }
+    driver.shutdown()
     buckets = buckets.empty
     CappedBucket.clearCache()
     logger.info("ReactiveCouchbase plugin shutdown done.")

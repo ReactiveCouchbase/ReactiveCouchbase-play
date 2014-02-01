@@ -18,7 +18,7 @@ Contents
 Current version
 ============
 
-* current dev version for Play framework 2.2 is 0.1-SNAPSHOT
+* current dev version for Play framework 2.2 is 0.2-SNAPSHOT
   * https://raw.github.com/ReactiveCouchbase/repository/master/snapshots
 
 Starter Kits
@@ -691,6 +691,96 @@ PUT     /urls/:id                   @controllers.ShortURLController.update(id)
 ```
 
 Note : **You can also use the awesome play-autosource project (https://github.com/mandubian/play-autosource) that comes with Couchbase support**
+
+N1QL support
+=================
+
+ReactiveCouchbase N1QL search
+=======================
+
+N1QL is the Couchbase Query Language. The N1QL Developer Preview 2 (DP2) is a pre-beta release of the language and is available at
+
+http://www.couchbase.com/communities/n1ql
+
+The ReactiveCouchbase plugin offers a very experimental access to N1QL based on the N1QL DP1. As it is experimental, I can not ensure that this feature will not massively change and/or will be continued.
+
+First setup your N1QL query server. Download it and expand it. Then connect it to your Couchbase server.
+
+./cbq-engine -couchbase http://<coucbhase-server-name>:8091/`
+
+Now you have to configure N1QL in you `conf/application.conf` file add :
+
+```
+
+couchbase {
+   n1ql {
+     host="127.0.0.1"
+     port=8093
+   }
+}
+
+```
+
+And now you can use it from your application
+
+```scala
+
+import play.api.libs.json._
+import org.reactivecouchbase._
+import org.reactivecouchbase.play.plugins.CouchbaseN1QLPlugin._
+import play.api.libs.iteratee.{Enumerator, Enumeratee}
+
+case class Person(fname: String, age: Int)
+
+object N1QLQuerier extends Controller {
+
+  implicit val personFormat = Json.format[Person]
+
+  implicit val bucket = PlayCouchbase.bucket("default")
+
+  implicit val couchbaseExecutionContext = PlayCouchbase.couchbaseExecutor
+
+  def find(age: Int) = Action.async {
+    N1QL( s""" SELECT fname, age FROM tutorial WHERE age > ${age} """, driver )
+                                                   .toList[Person].map { persons =>
+      Ok(s"Persons older than ${age}", persons))
+    }
+  }
+}
+
+```
+
+or use it the Enumerator way
+
+```scala
+
+import play.api.libs.json._
+import org.reactivecouchbase._
+import org.reactivecouchbase.play.plugins.CouchbaseN1QLPlugin._
+import play.api.libs.iteratee.{Enumerator, Enumeratee}
+
+case class Person(fname: String, age: Int)
+
+object N1QLQuerier extends Controller {
+
+  implicit val personFormat = Json.format[Person]
+
+  implicit val bucket = PlayCouchbase.bucket("default")
+
+  implicit val couchbaseExecutionContext = PlayCouchbase.couchbaseExecutor
+
+  def find(age: Int) = Action.async {
+    N1QL( s""" SELECT fname, age FROM tutorial WHERE age > ${age} """, driver )
+                                    .enumerate[Person].map { enumerator =>
+       Ok.chunked((enumerator &>
+        Enumeratee.collect[Person] { case p@Person(_, age) if age < 50 => p } ><>
+        Enumeratee.map[Person](personFormat.writes)) >>>
+        Enumerator.eof))
+    }
+  }
+}
+
+```
 
 Use Couchbase as Cache implementation
 =====================================

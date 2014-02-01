@@ -9,11 +9,28 @@ import play.api.libs.json.{JsObject, Json}
 import org.reactivecouchbase.CouchbaseRWImplicits.jsObjectToDocumentWriter
 import java.util.concurrent.atomic.AtomicLong
 import org.reactivecouchbase.Couchbase
+import play.api.data.Form
+import play.api.data.format._
 
 object Application extends Controller {
 
   def bucket = PlayCouchbase.bucket("persons")(Play.current)
   implicit val ec = PlayCouchbase.couchbaseExecutor(Play.current)
+
+  case class User()
+
+  def FormAction(form: Form[User])(block: (User) => SimpleResult): EssentialAction = {
+    Action { request =>
+      form.bindFromRequest()(request).fold(
+        errors => BadRequest(errors),
+        user => block(user)
+      )
+    }
+  }
+
+  def index = FormAction(myForm) { user =>
+    Ok(views.html.index(user))
+  }
 
   def index = Action {
     Ok(views.html.index())

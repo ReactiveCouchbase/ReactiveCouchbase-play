@@ -10,6 +10,7 @@ Contents
     - [Usage from a model](#standard-usage-from-a-model)
 - [Capped bucket & tailable queries](#)
 - [How to build CRUD Application](#crud-application)
+- [ReactiveCouchbase N1QL support](#reactivecouchbase-n1ql-search)
 - [Use Couchbase as Play Cache](#use-couchbase-as-cache-implementation)
 - [Synchronise Design Documents (evolutions)](#synchonize-couchbase-design-documents)
 - [Insert data at startup (fixtures)](#automatically-insert-documents-at-startup)
@@ -691,9 +692,6 @@ PUT     /urls/:id                   @controllers.ShortURLController.update(id)
 ```
 
 Note : **You can also use the awesome play-autosource project (https://github.com/mandubian/play-autosource) that comes with Couchbase support**
-
-N1QL support
-=================
 
 ReactiveCouchbase N1QL search
 =======================

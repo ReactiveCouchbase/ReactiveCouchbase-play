@@ -94,7 +94,7 @@ public abstract class CrudSourceController<T> extends Controller {
         return async(getSource().insert(t).map(new F.Function<String, Result>() {
             @Override
             public Result apply(String id) throws Throwable {
-                return ok(Json.parse("{\"id\":" + id + "}"));
+                return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
         }));
     }
@@ -103,7 +103,7 @@ public abstract class CrudSourceController<T> extends Controller {
         return async(getSource().delete(id).map(new F.Function<Void, Result>() {
             @Override
             public Result apply(Void aVoid) throws Throwable {
-                return ok(Json.parse("{\"id\":" + id + "}"));
+                return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
         }));
     }
@@ -113,7 +113,7 @@ public abstract class CrudSourceController<T> extends Controller {
         return async(getSource().update(id, t).map(new F.Function<Void, Result>() {
             @Override
             public Result apply(Void aVoid) throws Throwable {
-                return ok(Json.parse("{\"id\":" + id + "}"));
+                return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
         }));
     }
@@ -123,7 +123,7 @@ public abstract class CrudSourceController<T> extends Controller {
         return async(getSource().updatePartial(id, update).map(new F.Function<Void, Result>() {
             @Override
             public Result apply(Void aVoid) throws Throwable {
-                return ok(Json.parse("{\"id\":" + id + "}"));
+                return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
         }));
     }

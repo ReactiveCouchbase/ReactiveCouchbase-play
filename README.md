@@ -129,9 +129,7 @@ You will then be able to use the couchbase API from your Play controllers. The f
 
 import play.api.mvc.{Action, Controller}
 import play.api.libs.json._
-import org.reactivecouchbase.play.Couchbase
-import org.reactivecouchbase.play.CouchbaseBucket
-import org.reactivecouchbase.play.CouchbaseController
+import org.reactivecouchbase.play._
 import play.api.Play.current
 
 case class User(name: String, surname: String, email: String)

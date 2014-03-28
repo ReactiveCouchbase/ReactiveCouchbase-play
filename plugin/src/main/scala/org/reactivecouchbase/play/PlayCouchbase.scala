@@ -6,7 +6,7 @@ import scala.concurrent.ExecutionContext
 import akka.actor.ActorSystem
 import org.reactivecouchbase.{RCLogger, LoggerLike, CouchbaseBucket}
 import org.reactivecouchbase.play.plugins.CouchbasePlugin
-import org.reactivecouchbase.client.CappedBucket
+import org.reactivecouchbase.experimental.CappedBucket
 
 object PlayCouchbase {
 

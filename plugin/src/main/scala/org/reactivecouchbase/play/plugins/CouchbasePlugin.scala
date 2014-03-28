@@ -5,7 +5,7 @@ import com.typesafe.config.ConfigObject
 import collection.JavaConversions._
 import org.reactivecouchbase.{ReactiveCouchbaseDriver, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
-import org.reactivecouchbase.client.CappedBucket
+import org.reactivecouchbase.experimental.CappedBucket
 
 class CouchbasePlugin(implicit app: Application) extends Plugin {
 

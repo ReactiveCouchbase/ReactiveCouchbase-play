@@ -3,7 +3,7 @@ package models;
 import com.couchbase.client.protocol.views.ComplexKey;
 import com.couchbase.client.protocol.views.Query;
 import com.couchbase.client.protocol.views.Stale;
-import net.spy.memcached.ops.OperationStatus;
+import org.reactivecouchbase.client.OpResult;
 import org.reactivecouchbase.play.java.Couchbase;
 import org.reactivecouchbase.play.java.CouchbaseBucket;
 import play.data.Form;
@@ -61,15 +61,15 @@ public class ShortURL {
         });
     }
 
-    public static F.Promise<OperationStatus> save(ShortURL url) {
+    public static F.Promise<OpResult> save(ShortURL url) {
         return bucket.set(url.id, url);
     }
 
-    public static F.Promise<OperationStatus> remove(String id) {
+    public static F.Promise<OpResult> remove(String id) {
         return bucket.delete(id);
     }
 
-    public static F.Promise<OperationStatus> remove(ShortURL url) {
+    public static F.Promise<OpResult> remove(ShortURL url) {
         return bucket.delete(url.id);
     }
 }

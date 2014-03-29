@@ -13,6 +13,7 @@ import play.api.data.Forms._
 import play.api.Play.current
 import play.api.libs.iteratee.{Enumeratee, Enumerator}
 import org.reactivecouchbase.play.PlayCouchbase
+import org.reactivecouchbase.client.OpResult
 
 case class Counter(value: Long)
 case class IncrementAndGet()
@@ -98,15 +99,15 @@ object ShortURLs {
     bucket.find[ShortURL]("shorturls", "by_url")(query).map(_.headOption)
   }
 
-  def save(url: ShortURL): Future[OperationStatus] = {
+  def save(url: ShortURL): Future[OpResult] = {
     bucket.set[ShortURL]( url.id, url )
   }
 
-  def remove(id: String): Future[OperationStatus] = {
+  def remove(id: String): Future[OpResult] = {
     bucket.delete(id)
   }
 
-  def remove(url: ShortURL): Future[OperationStatus] = {
+  def remove(url: ShortURL): Future[OpResult] = {
     bucket.delete(url.id)
   }
 }

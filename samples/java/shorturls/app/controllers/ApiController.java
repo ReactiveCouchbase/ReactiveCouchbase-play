@@ -4,6 +4,7 @@ import models.IdGenerator;
 import models.ShortURL;
 import net.spy.memcached.ops.OperationStatus;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.reactivecouchbase.client.OpResult;
 import play.libs.F;
 import play.libs.Json;
 import play.mvc.Controller;
@@ -29,9 +30,9 @@ public class ApiController extends Controller {
 
     public static Result delete(String id) {
         return async(
-            ShortURL.remove(id).map(new F.Function<OperationStatus, Result>() {
+            ShortURL.remove(id).map(new F.Function<OpResult, Result>() {
                 @Override
-                public Result apply(OperationStatus status) throws Throwable {
+                public Result apply(OpResult status) throws Throwable {
                     if (status.isSuccess()) {
                         ObjectNode node = Json.newObject();
                         node.put("status", "deleted");
@@ -100,9 +101,9 @@ public class ApiController extends Controller {
                                 public F.Promise<Result> apply(Object o) throws Throwable {
                                     Long val = (Long) o;
                                     final ShortURL shortUrl = new ShortURL(val.toString(), url);
-                                    return ShortURL.save(shortUrl).flatMap(new F.Function<OperationStatus, F.Promise<Result>>() {
+                                    return ShortURL.save(shortUrl).flatMap(new F.Function<OpResult, F.Promise<Result>>() {
                                         @Override
-                                        public F.Promise<Result> apply(OperationStatus status) throws Throwable {
+                                        public F.Promise<Result> apply(OpResult status) throws Throwable {
                                             if (status.isSuccess()) {
                                                 ObjectNode node = Json.newObject();
                                                 node.put("status", "created");

@@ -5,7 +5,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.util.Timeout;
-import net.spy.memcached.ops.OperationStatus;
+import org.reactivecouchbase.client.OpResult;
 import play.libs.F;
 import scala.concurrent.duration.Duration;
 
@@ -44,18 +44,18 @@ public class IdGenerator {
                     public Object apply(Counter counter) throws Throwable {
                         if (counter != null) {
                             final Counter newValue = new Counter(counter.value + 1);
-                            ShortURL.bucket.set(counterKey, newValue).map(new F.Function<OperationStatus, Object>() {
+                            ShortURL.bucket.set(counterKey, newValue).map(new F.Function<OpResult, Object>() {
                                 @Override
-                                public Object apply(OperationStatus operationStatus) throws Throwable {
+                                public Object apply(OpResult operationStatus) throws Throwable {
                                     ref.tell(newValue.value, self());
                                     return null;
                                 }
                             });
                             return null;
                         } else {
-                            ShortURL.bucket.set(counterKey, 1L).map(new F.Function<OperationStatus, Object>() {
+                            ShortURL.bucket.set(counterKey, 1L).map(new F.Function<OpResult, Object>() {
                                 @Override
-                                public Object apply(OperationStatus operationStatus) throws Throwable {
+                                public Object apply(OpResult operationStatus) throws Throwable {
                                     ref.tell(1L, self());
                                     return null;
                                 }

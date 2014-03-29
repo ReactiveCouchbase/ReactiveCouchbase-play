@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit
 import net.spy.memcached.ops.OperationStatus
 import org.reactivecouchbase.{Couchbase, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
+import org.reactivecouchbase.client.OpResult
 
 /**
  * @author Didier Bathily - https://github.com/dbathily
@@ -22,7 +23,7 @@ case class DocumentDescription(fileName:String, bucket:CouchbaseBucket , bytes:A
 
   lazy val name = (json \ "name").asOpt[String].getOrElse(fileName)
 
-  def put(dev:Boolean)(implicit ec:ExecutionContext):Future[OperationStatus] = {
+  def put(dev:Boolean)(implicit ec:ExecutionContext):Future[OpResult] = {
     Couchbase.createDesignDoc(DocumentDescription.name(name, dev), json.as[JsObject])(bucket, ec)
   }
 
@@ -51,7 +52,7 @@ object CouchbaseEvolutions {
     if(synchronise)
       designDocuments(bucket).filterNot { name =>
         docs.exists(nd => DocumentDescription.name(nd.name, dev) == DocumentDescription.name(name, dev))
-      }.foldLeft(List[OperationStatus]()) {
+      }.foldLeft(List[OpResult]()) {
         (res, doc) => {
           val name = DocumentDescription.name(doc, dev)
           val status = Await.result(Couchbase.deleteDesignDoc(name), Duration(1, TimeUnit.SECONDS))
@@ -61,7 +62,7 @@ object CouchbaseEvolutions {
         }
       }
 
-    docs.foldLeft(List[OperationStatus]()) {
+    docs.foldLeft(List[OpResult]()) {
       (res, doc) => {
         val status = Await.result(doc.put(dev), Duration(1, TimeUnit.SECONDS))
         if(!status.isSuccess)

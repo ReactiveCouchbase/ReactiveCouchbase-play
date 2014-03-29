@@ -5,7 +5,7 @@ import com.couchbase.client.protocol.views.View;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
-import net.spy.memcached.ops.OperationStatus;
+import org.reactivecouchbase.client.OpResult;
 import org.reactivecouchbase.play.java.CouchbaseBucket;
 import play.libs.F;
 import play.libs.Json;
@@ -51,45 +51,45 @@ public class CrudSource<T> {
             id = idField.asText();
         }
         final String finalId = id;
-        return bucket.set(id, t).map(new F.Function<OperationStatus, String>() {
+        return bucket.set(id, t).map(new F.Function<OpResult, String>() {
             @Override
-            public String apply(OperationStatus operationStatus) throws Throwable {
+            public String apply(OpResult operationStatus) throws Throwable {
                 return finalId;
             }
         });
     }
 
     public F.Promise<Void> delete(String id) {
-        return bucket.delete(id).map(new F.Function<OperationStatus, Void>() {
+        return bucket.delete(id).map(new F.Function<OpResult, Void>() {
             @Override
-            public Void apply(OperationStatus operationStatus) throws Throwable {
+            public Void apply(OpResult operationStatus) throws Throwable {
                 return null;
             }
         });
     }
 
     public F.Promise<Void> update(String id, T t) {
-        return bucket.replace(id, t).map(new F.Function<OperationStatus, Void>() {
+        return bucket.replace(id, t).map(new F.Function<OpResult, Void>() {
             @Override
-            public Void apply(OperationStatus operationStatus) throws Throwable {
+            public Void apply(OpResult operationStatus) throws Throwable {
                 return null;
             }
         });
     }
 
     public F.Promise<Void> updatePartial(final String id, final JsonNode update) {
-        return updatePartialWithStatus(id, update).map(new F.Function<OperationStatus, Void>() {
+        return updatePartialWithStatus(id, update).map(new F.Function<OpResult, Void>() {
             @Override
-            public Void apply(OperationStatus operationStatus) throws Throwable {
+            public Void apply(OpResult operationStatus) throws Throwable {
                 return null;
             }
         });
     }
 
-    private F.Promise<OperationStatus> updatePartialWithStatus(final String id, final JsonNode update) {
-        return get(id).flatMap(new F.Function<F.Tuple<F.Option<T>, String>, F.Promise<OperationStatus>>() {
+    private F.Promise<OpResult> updatePartialWithStatus(final String id, final JsonNode update) {
+        return get(id).flatMap(new F.Function<F.Tuple<F.Option<T>, String>, F.Promise<OpResult>>() {
             @Override
-            public F.Promise<OperationStatus> apply(F.Tuple<F.Option<T>, String> ts) throws Throwable {
+            public F.Promise<OpResult> apply(F.Tuple<F.Option<T>, String> ts) throws Throwable {
                 T updatedValue = ts._1.map(new F.Function<T, T>() {
                     @Override
                     public T apply(T t) throws Throwable {
@@ -112,7 +112,7 @@ public class CrudSource<T> {
     }
 
     public F.Promise<Integer> batchInsert(Iterable<T> values) {
-        List<F.Promise<? extends OperationStatus>> promises = new ArrayList<F.Promise<? extends OperationStatus>>();
+        List<F.Promise<? extends OpResult>> promises = new ArrayList<F.Promise<? extends OpResult>>();
         for (T t : values) {
             String id = UUID.randomUUID().toString();
             JsonNode node = Json.toJson(t);
@@ -122,11 +122,11 @@ public class CrudSource<T> {
             }
             promises.add(bucket.set(id, t));
         }
-        return F.Promise.sequence(promises).map(new F.Function<List<OperationStatus>, Integer>() {
+        return F.Promise.sequence(promises).map(new F.Function<List<OpResult>, Integer>() {
             @Override
-            public Integer apply(List<OperationStatus> operationStatuses) throws Throwable {
+            public Integer apply(List<OpResult> operationStatuses) throws Throwable {
                 AtomicInteger total = new AtomicInteger(0);
-                for (OperationStatus status : operationStatuses) {
+                for (OpResult status : operationStatuses) {
                     if (status.isSuccess()) {
                         total.incrementAndGet();
                     }
@@ -140,7 +140,7 @@ public class CrudSource<T> {
         return bucket.find(view, query, clazz).flatMap(new F.Function<Collection<T>, F.Promise<Integer>>() {
             @Override
             public F.Promise<Integer> apply(Collection<T> ts) throws Throwable {
-                List<F.Promise<? extends OperationStatus>> promises = new ArrayList<F.Promise<? extends OperationStatus>>();
+                List<F.Promise<? extends OpResult>> promises = new ArrayList<F.Promise<? extends OpResult>>();
                 for (T t : ts) {
                     JsonNode node = Json.toJson(t);
                     JsonNode idField = node.findValue(ID);
@@ -148,11 +148,11 @@ public class CrudSource<T> {
                         promises.add(bucket.delete(idField.asText()));
                     }
                 }
-                return F.Promise.sequence(promises).map(new F.Function<List<OperationStatus>, Integer>() {
+                return F.Promise.sequence(promises).map(new F.Function<List<OpResult>, Integer>() {
                     @Override
-                    public Integer apply(List<OperationStatus> operationStatuses) throws Throwable {
+                    public Integer apply(List<OpResult> operationStatuses) throws Throwable {
                         AtomicInteger total = new AtomicInteger(0);
-                        for (OperationStatus status : operationStatuses) {
+                        for (OpResult status : operationStatuses) {
                             if (status.isSuccess()) {
                                 total.incrementAndGet();
                             }
@@ -168,24 +168,24 @@ public class CrudSource<T> {
         return bucket.find(view, query, clazz).flatMap(new F.Function<Collection<T>, F.Promise<Integer>>() {
             @Override
             public F.Promise<Integer> apply(Collection<T> ts) throws Throwable {
-                List<F.Promise<? extends OperationStatus>> promises = new ArrayList<F.Promise<? extends OperationStatus>>();
+                List<F.Promise<? extends OpResult>> promises = new ArrayList<F.Promise<? extends OpResult>>();
                 for (T t : ts) {
                     JsonNode node = Json.toJson(t);
                     final JsonNode idField = node.findValue(ID);
                     if (idField != null) {
-                        promises.add(bucket.get(idField.asText(), clazz).flatMap(new F.Function<T, F.Promise<OperationStatus>>() {
+                        promises.add(bucket.get(idField.asText(), clazz).flatMap(new F.Function<T, F.Promise<OpResult>>() {
                             @Override
-                            public F.Promise<OperationStatus> apply(T t) throws Throwable {
+                            public F.Promise<OpResult> apply(T t) throws Throwable {
                                 return bucket.replace(idField.asText(), t);
                             }
                         }));
                     }
                 }
-                return F.Promise.sequence(promises).map(new F.Function<List<OperationStatus>, Integer>() {
+                return F.Promise.sequence(promises).map(new F.Function<List<OpResult>, Integer>() {
                     @Override
-                    public Integer apply(List<OperationStatus> operationStatuses) throws Throwable {
+                    public Integer apply(List<OpResult> operationStatuses) throws Throwable {
                         AtomicInteger total = new AtomicInteger(0);
-                        for (OperationStatus status : operationStatuses) {
+                        for (OpResult status : operationStatuses) {
                             if (status.isSuccess()) {
                                 total.incrementAndGet();
                             }

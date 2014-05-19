@@ -59,6 +59,7 @@ object ShortURLs {
   implicit val counterReader = Json.reads[Counter]
   implicit val counterWriter = Json.writes[Counter]
   implicit val ec = PlayCouchbase.couchbaseExecutor
+  val truc = "dsmlqmlskjdsq;dk"
 
   def bucket = PlayCouchbase.bucket("default")
 

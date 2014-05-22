@@ -56,7 +56,7 @@ version := "1.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
   cache,
-  "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2"
+  "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3-SNAPSHOT"
 )
 
 resolvers += "ReactiveCouchbase repository" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
@@ -80,7 +80,7 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     cache,
-    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2"
+    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3-SNAPSHOT"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

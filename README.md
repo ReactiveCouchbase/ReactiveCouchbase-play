@@ -19,7 +19,7 @@ Contents
 Current version
 ============
 
-* current dev version for Play framework 2.2 is 0.2-SNAPSHOT
+* current dev version for Play framework 2.2 is 0.2
   * https://raw.github.com/ReactiveCouchbase/repository/master/snapshots
 
 Starter Kits
@@ -56,7 +56,7 @@ version := "1.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
   cache,
-  "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2-SNAPSHOT"
+  "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2"
 )
 
 resolvers += "ReactiveCouchbase repository" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
@@ -80,7 +80,7 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     cache,
-    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2-SNAPSHOT"
+    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2"
   )
 
   val main = play.Project(appName, appVersion, appDependencies).settings(

@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
     jdbc,
     anorm,
     cache,
-    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2-SNAPSHOT"
+    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.2"
   )
 
 

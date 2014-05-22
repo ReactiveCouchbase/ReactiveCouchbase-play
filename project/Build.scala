@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "ReactiveCouchbase-play"
-  val appVersion      = "0.2-SNAPSHOT"
+  val appVersion      = "0.2"
   val appScalaVersion = "2.10.2"
   val appScalaBinaryVersion = "2.10"
   val appScalaCrossVersions = Seq("2.10.2")
@@ -51,8 +51,8 @@ object ApplicationBuild extends Build {
     .settings(
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
       resolvers += "Spy Repository" at "http://files.couchbase.com/maven2",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.2-SNAPSHOT",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.2-SNAPSHOT",
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.2",
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.2",
       libraryDependencies += "com.typesafe.play" %% "play" % "2.2.0" % "provided",
       libraryDependencies += "com.typesafe.play" %% "play-cache" % "2.2.0",
       libraryDependencies += "com.typesafe.play" %% "play-test" % "2.2.0" % "test",
@@ -108,7 +108,7 @@ object ApplicationBuild extends Build {
       parallelExecution in Test := false,
       publishLocal := {},
       publish := {},
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.2-SNAPSHOT"
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.2"
     ).dependsOn(plugin)
 
     lazy val PersonsSample = play.Project(

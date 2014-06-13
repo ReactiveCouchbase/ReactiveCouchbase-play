@@ -34,7 +34,7 @@ public abstract class CrudSourceController<T> extends Controller {
         return path.replace("/", "");
     }
 
-    public Result onRequest(String other) {
+    public F.Promise<Result> onRequest(String other) {
         if (request().path().startsWith(path)) {
             String method = request().method();
             String partialPath = request().path().substring(0, path.length());
@@ -59,15 +59,16 @@ public abstract class CrudSourceController<T> extends Controller {
             } else if (method.equals("DELETE") && partialPath.matches(Id)) {
                 return delete(extractId(partialPath));
             } else {
-                return notFound();
+                return F.Promise.<Result>pure(notFound());
             }
         } else {
-            return notFound();
+            return F.Promise.<Result>pure(notFound());
         }
     }
 
-    public Result get(final String id) {
-        return async(getSource().get(id).map(new F.Function<F.Tuple<F.Option<T>, String>, Result>() {
+    public F.Promise<Result> get(final String id) {
+
+        return getSource().get(id).map(new F.Function<F.Tuple<F.Option<T>, String>, Result>() {
             @Override
             public Result apply(F.Tuple<F.Option<T>, String> ts) throws Throwable {
                 if (!ts._1.isDefined()) {
@@ -86,51 +87,51 @@ public abstract class CrudSourceController<T> extends Controller {
                     }
                 }
             }
-        }));
+        });
     }
 
-    public Result insert() {
+    public F.Promise<Result> insert() {
         T t = Json.fromJson(request().body().asJson(), getSource().clazz);
-        return async(getSource().insert(t).map(new F.Function<String, Result>() {
+        return getSource().insert(t).map(new F.Function<String, Result>() {
             @Override
             public Result apply(String id) throws Throwable {
                 return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
-        }));
+        });
     }
 
-    public Result delete(final String id) {
-        return async(getSource().delete(id).map(new F.Function<Void, Result>() {
+    public F.Promise<Result> delete(final String id) {
+        return getSource().delete(id).map(new F.Function<Void, Result>() {
             @Override
             public Result apply(Void aVoid) throws Throwable {
                 return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
-        }));
+        });
     }
 
-    public Result update(final String id) {
+    public F.Promise<Result> update(final String id) {
         T t = Json.fromJson(request().body().asJson(), getSource().clazz);
-        return async(getSource().update(id, t).map(new F.Function<Void, Result>() {
+        return getSource().update(id, t).map(new F.Function<Void, Result>() {
             @Override
             public Result apply(Void aVoid) throws Throwable {
                 return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
-        }));
+        });
     }
 
-    public Result updatePartial(final String id) {
+    public F.Promise<Result> updatePartial(final String id) {
         JsonNode update = request().body().asJson();
-        return async(getSource().updatePartial(id, update).map(new F.Function<Void, Result>() {
+        return getSource().updatePartial(id, update).map(new F.Function<Void, Result>() {
             @Override
             public Result apply(Void aVoid) throws Throwable {
                 return ok(Json.parse("{\"id\":\"" + id + "\"}"));
             }
-        }));
+        });
     }
 
-    public Result find() {
+    public F.Promise<Result> find() {
         final F.Tuple<QueryObject, Query> tuple = QueryObject.extractQuery(request(), defaultDesignDocname(), defaultViewName());
-        return async(getSource().view(tuple._1.docName, tuple._1.view).flatMap(new F.Function<View, F.Promise<Collection<F.Tuple<T, String>>>>() {
+        return getSource().view(tuple._1.docName, tuple._1.view).flatMap(new F.Function<View, F.Promise<Collection<F.Tuple<T, String>>>>() {
             @Override
             public F.Promise<Collection<F.Tuple<T, String>>> apply(View view) throws Throwable {
                 return getSource().find(view, tuple._2);
@@ -153,26 +154,26 @@ public abstract class CrudSourceController<T> extends Controller {
                 }
                 return ok(Json.toJson(nodes));
             }
-        }));
+        });
     }
 
-    public Result batchInsert() {
+    public F.Promise<Result> batchInsert() {
         ArrayNode nodes = ((ArrayNode) request().body().asJson());
         List<T> values = new ArrayList<T>();
         for (JsonNode n : nodes) {
            values.add(Json.fromJson(n, getSource().clazz));
         }
-        return async(getSource().batchInsert(values).map(new F.Function<Integer, Result>() {
+        return getSource().batchInsert(values).map(new F.Function<Integer, Result>() {
             @Override
             public Result apply(Integer integer) throws Throwable {
                 return ok(Json.parse("{\"nb\":" + integer + "}"));
             }
-        }));
+        });
     }
 
-    public Result batchDelete() {
+    public F.Promise<Result> batchDelete() {
         final F.Tuple<QueryObject, Query> tuple = QueryObject.extractQuery(request(), defaultDesignDocname(), defaultViewName());
-        return async(getSource().view(tuple._1.docName, tuple._1.view).flatMap(new F.Function<View, F.Promise<Result>>() {
+        return getSource().view(tuple._1.docName, tuple._1.view).flatMap(new F.Function<View, F.Promise<Result>>() {
             @Override
             public F.Promise<Result> apply(View view) throws Throwable {
                 return getSource().batchDelete(view, tuple._2).map(new F.Function<Integer, Result>() {
@@ -182,13 +183,13 @@ public abstract class CrudSourceController<T> extends Controller {
                     }
                 });
             }
-        }));
+        });
     }
 
-    public Result batchUpdate() {
+    public F.Promise<Result> batchUpdate() {
         final F.Tuple<QueryObject, Query> tuple = QueryObject.extractQuery(request(), defaultDesignDocname(), defaultViewName());
         final JsonNode update = request().body().asJson();
-        return async(getSource().view(tuple._1.docName, tuple._1.view).flatMap(new F.Function<View, F.Promise<Result>>() {
+        return getSource().view(tuple._1.docName, tuple._1.view).flatMap(new F.Function<View, F.Promise<Result>>() {
             @Override
             public F.Promise<Result> apply(View view) throws Throwable {
                 return getSource().batchUpdate(view, tuple._2, update).map(new F.Function<Integer, Result>() {
@@ -198,7 +199,7 @@ public abstract class CrudSourceController<T> extends Controller {
                     }
                 });
             }
-        }));
+        });
     }
 
 

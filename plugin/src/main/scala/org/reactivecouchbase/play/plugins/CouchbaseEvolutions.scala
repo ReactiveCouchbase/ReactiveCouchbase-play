@@ -2,13 +2,11 @@ package org.reactivecouchbase.play.plugins
 
 import play.api._
 import scala.reflect.io.Directory
-import scalax.io.Resource
 import play.api.libs.Codecs
 import play.api.libs.json._
 import scala.concurrent.{Future, Await, ExecutionContext}
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
-import net.spy.memcached.ops.OperationStatus
 import org.reactivecouchbase.{Couchbase, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
 import org.reactivecouchbase.client.OpResult
@@ -105,7 +103,7 @@ class CouchbaseEvolutionsPlugin(app: Application) extends Plugin {
           Play.getExistingFile(s"$docs/$name")(app).map { folder =>
             logger.debug(s"Search couchbase documents for bucket $name in ${folder.getAbsolutePath}")
             val documents = new Directory(folder).files.filter(_.toFile.name.endsWith(".json")).map { path =>
-              DocumentDescription(path.name.replaceAll("""\.[^.]*$""", ""), bucket, Resource.fromInputStream(path.toFile.inputStream()).byteArray)
+              DocumentDescription(path.name.replaceAll("""\.[^.]*$""", ""), bucket, path.toFile.toByteArray()) //Resource.fromInputStream(path.toFile.inputStream()).byteArray)
             }
 
             if(!documents.isEmpty) {

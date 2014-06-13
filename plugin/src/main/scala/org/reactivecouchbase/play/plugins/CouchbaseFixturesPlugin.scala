@@ -2,13 +2,14 @@ package org.reactivecouchbase.play.plugins
 
 import play.api._
 import scala.reflect.io.Directory
-import scalax.io.{Codec, Resource}
 import play.api.libs.json._
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
 import org.reactivecouchbase.{CouchbaseRWImplicits, CouchbaseBucket, Couchbase}
 import org.reactivecouchbase.play.PlayCouchbase
+import com.google.common.io.Files
+import java.nio.charset.Charset
 
 class CouchbaseFixturesPlugin(app: Application) extends Plugin {
 
@@ -37,7 +38,7 @@ class CouchbaseFixturesPlugin(app: Application) extends Plugin {
         val id = bucketConf.getString("key").getOrElse("_id")
         Play.getExistingFile(s"$docs/$name")(app).map { folder =>
           val documents = new Directory(folder).files.filter(_.toFile.name.endsWith(".json")).toList.map { path =>
-            Json.parse(Resource.fromInputStream(path.toFile.inputStream()).string(Codec.UTF8))
+            Json.parse(Files.toString(new java.io.File(path.toFile.path), Charset.forName("UTF-8")))
           } filter {
             case array: JsArray => true
             case _ => false

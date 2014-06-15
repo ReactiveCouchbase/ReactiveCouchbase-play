@@ -316,8 +316,7 @@ case class Beer(id: String, name: String, brewery: String) {
 
 object Beer {
 
-  implicit val beerReader = Json.reads[Beer]
-  implicit val beerWriter = Json.writes[Beer]
+  implicit val beerFmt = Json.format[Beer]
   implicit val ec = PlayCouchbase.couchbaseExecutor
 
   def bucket = PlayCouchbase.bucket("default")

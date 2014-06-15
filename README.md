@@ -338,7 +338,7 @@ object Beer {
   }
 
   def save(beer: Beer): Future[OpResult] = {
-    bucket.set[Beer](id, beer)
+    bucket.set[Beer](beer.id, beer)
   }
 
   def remove(beer: Beer): Future[OpResult] = {

@@ -1,4 +1,4 @@
-ReactiveCouchbase Plugin for Play framework 2.2
+ReactiveCouchbase Plugin for Play framework 2.3
 =======================================
 
 Contents
@@ -19,7 +19,7 @@ Contents
 Current version
 ============
 
-* current dev version for Play framework 2.2 is 0.2
+* current dev version for Play framework 2.3 is 0.3-SNAPSHOT
   * https://raw.github.com/ReactiveCouchbase/repository/master/snapshots
 
 Starter Kits
@@ -49,41 +49,45 @@ Project configuration
 in your `build.sbt` file add dependencies and resolvers like :
 
 ```scala
-
-name := "shorturls"
+name := "myproject"
 
 version := "1.0-SNAPSHOT"
 
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
+
+scalaVersion := "2.11.1"
+
 libraryDependencies ++= Seq(
   cache,
+  ws,
   "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3-SNAPSHOT"
 )
 
-resolvers += "ReactiveCouchbase repository" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
-
-play.Project.playScalaSettings
+resolvers += "ReactiveCouchbase" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
 ```
 
 or if you use the good old `project\Build.scala` file :
 
 
 ```scala
-
 import sbt._
 import Keys._
-import play.Project._
+import play.Play.autoImport._
+import PlayKeys._
+import play.PlayScala
 
 object ApplicationBuild extends Build {
 
-  val appName         = "shorturls"
-  val appVersion      = "1.0-SNAPSHOT"
-
-  val appDependencies = Seq(
-    cache,
-    "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3-SNAPSHOT"
-  )
-
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  lazy val root = Project(id = "My Project", base = file(".")).enablePlugins(PlayScala).settings(
+    libraryDependencies ++= Seq(
+      cache,
+      ws,
+      "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3-SNAPSHOT"
+    ),
+    version := "1.0-SNAPSHOT",
+    scalaVersion := "2.11.1",
+    organization := "com.foo.bar",
+    incOptions := incOptions.value.withNameHashing(true),
     resolvers += "ReactiveCouchbase repository" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
   )
 }
@@ -98,15 +102,6 @@ add in your `conf/application.conf` file :
 ```
 
 couchbase {
-  actorctx {
-    timeout=1000
-    execution-context {
-      fork-join-executor {
-        parallelism-factor = 4.0
-        parallelism-max = 40
-      }
-    }
-  }
   buckets = [{
     host="127.0.0.1"
     port="8091"
@@ -311,11 +306,12 @@ Standard usage from a model
 import play.api.libs.json._
 import org.reactivecouchbase.play.Couchbase
 import org.reactivecouchbase.play.CouchbaseBucket
+import org.reactivecouchbase.client.OpResult
 import play.api.Play.current
 
 case class Beer(id: String, name: String, brewery: String) {
-  def save(): Future[OperationStatus] = Beer.save(this)
-  def remove(): Future[OperationStatus] = Beer.remove(this)
+  def save(): Future[OpResult] = Beer.save(this)
+  def remove(): Future[OpResult] = Beer.remove(this)
 }
 
 object Beer {
@@ -324,7 +320,7 @@ object Beer {
   implicit val beerWriter = Json.writes[Beer]
   implicit val ec = PlayCouchbase.couchbaseExecutor
 
-  def bucket = PlayCouchbase.bucket("bucket2")
+  def bucket = PlayCouchbase.bucket("default")
 
   def findById(id: String): Future[Option[Beer]] = {
     bucket.get[Beer](id)
@@ -341,12 +337,12 @@ object Beer {
     bucket.find[Beer]("beer", "by_name")(query).map(_.headOption)
   }
 
-  def save(beer: Beer): Future[OperationStatus] = {
-    bucket.set[Beer](beer)
+  def save(beer: Beer): Future[OpResult] = {
+    bucket.set[Beer](id, beer)
   }
 
-  def remove(beer: Beer): Future[OperationStatus] = {
-    bucket.delete[Beer](beer)
+  def remove(beer: Beer): Future[OpResult] = {
+    bucket.delete(beer)
   }
 }
 
@@ -361,7 +357,7 @@ package models;
 import com.couchbase.client.protocol.views.ComplexKey;
 import com.couchbase.client.protocol.views.Query;
 import com.couchbase.client.protocol.views.Stale;
-import net.spy.memcached.ops.OperationStatus;
+import org.reactivecouchbase.client.OpResult;
 import org.reactivecouchbase.play.java.couchbase.Couchbase;
 import org.reactivecouchbase.play.java.couchbase.CouchbaseBucket;
 import play.libs.F;
@@ -411,11 +407,11 @@ public class ShortURL {
         });
     }
 
-    public static Promise<OperationStatus> save(ShortURL url) {
+    public static Promise<OpResult> save(ShortURL url) {
         return bucket.set(url.id, url);
     }
 
-    public static Promise<OperationStatus> remove(ShortURL url) {
+    public static Promise<OpResult> remove(ShortURL url) {
         return bucket.delete(url.id);
     }
 }

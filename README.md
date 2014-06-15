@@ -342,7 +342,7 @@ object Beer {
   }
 
   def remove(beer: Beer): Future[OpResult] = {
-    bucket.delete(beer)
+    bucket.delete(beer.id)
   }
 }
 

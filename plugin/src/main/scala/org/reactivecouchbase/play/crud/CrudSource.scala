@@ -12,7 +12,7 @@ import play.api.libs.json.JsObject
 import org.reactivecouchbase.client.TypedRow
 
 // Higly inspired (not to say copied ;)) from https://github.com/mandubian/play-autosource
-class CouchbaseCrudSource[T:Format](bucket: CouchbaseBucket, idKey: String = "_id") {
+class CouchbaseCrudSource[T:Format](bucket: CouchbaseBucket, idKey: String = "_id", generateId: () => String) {
 
   import org.reactivecouchbase.CouchbaseRWImplicits._
 
@@ -21,7 +21,7 @@ class CouchbaseCrudSource[T:Format](bucket: CouchbaseBucket, idKey: String = "_i
   implicit val ctx: ExecutionContext = bucket.driver.executor()
 
   def insert(t: T): Future[String] = {
-    val id: String = UUID.randomUUID().toString
+    val id: String = generateId()
     val json = writer.writes(t).as[JsObject]
     json \ idKey match {
       case _: JsUndefined => {
@@ -215,8 +215,9 @@ abstract class CouchbaseCrudSourceController[T](implicit format: Format[T], app:
   def defaultDesignDocname = ""
   def defaultViewName = ""
   def idKey = "_id"
+  def generateId() = UUID.randomUUID().toString
 
-  lazy val res = new CouchbaseCrudSource[T](bucket, idKey)
+  lazy val res = new CouchbaseCrudSource[T](bucket, idKey, generateId)
 
   lazy implicit val ctx = bucket.driver.executor()
 

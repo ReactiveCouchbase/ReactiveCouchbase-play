@@ -45,10 +45,10 @@ object ApplicationBuild extends Build {
     .settings(baseSettings: _*)
     .settings(
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.3-SNAPSHOT",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.3-SNAPSHOT",
-      libraryDependencies += "com.typesafe.play" %% "play" % "2.3.0" % "provided",
-      libraryDependencies += "com.typesafe.play" %% "play-cache" % "2.3.0",
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.3-SNAPSHOT" cross CrossVersion.binary,
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.3-SNAPSHOT" cross CrossVersion.binary,
+      libraryDependencies += "com.typesafe.play" %% "play" % "2.3.0" % "provided" cross CrossVersion.binary,
+      libraryDependencies += "com.typesafe.play" %% "play-cache" % "2.3.0" cross CrossVersion.binary,
       libraryDependencies += "com.google.guava" % "guava" % "17.0",
       //libraryDependencies += "com.typesafe.play" %% "play-test" % "2.3.0" % "test",
       organization := "org.reactivecouchbase",

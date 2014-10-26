@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
   val appName         = "ReactiveCouchbase-play"
-  val appVersion      = "0.3"
+  val appVersion      = "0.4-SNAPSHOT"
   val appScalaVersion = "2.11.1"
   //val appScalaBinaryVersion = "2.10"
   val appScalaCrossVersions = Seq("2.11.1", "2.10.4")
@@ -45,8 +45,8 @@ object ApplicationBuild extends Build {
     .settings(baseSettings: _*)
     .settings(
       resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.3" cross CrossVersion.binary,
-      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.3" cross CrossVersion.binary,
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-core" % "0.4-SNAPSHOT" cross CrossVersion.binary,
+      libraryDependencies += "org.reactivecouchbase" %% "reactivecouchbase-es" % "0.4-SNAPSHOT" cross CrossVersion.binary,
       libraryDependencies += "com.typesafe.play" %% "play" % "2.3.5" % "provided" cross CrossVersion.binary,
       libraryDependencies += "com.typesafe.play" %% "play-cache" % "2.3.5" cross CrossVersion.binary,
       libraryDependencies += "com.google.guava" % "guava" % "16.0.1",

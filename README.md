@@ -19,7 +19,8 @@ Contents
 Current version
 ============
 
-* current dev version for Play framework 2.3 is 0.3
+* current dev version for Play framework 2.3 is 0.3 or 0.4-SNAPSHOT
+  * https://raw.github.com/ReactiveCouchbase/repository/master/releases
   * https://raw.github.com/ReactiveCouchbase/repository/master/snapshots
 
 Starter Kits
@@ -63,7 +64,7 @@ libraryDependencies ++= Seq(
   "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3"
 )
 
-resolvers += "ReactiveCouchbase" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
+resolvers += "ReactiveCouchbase" at "https://raw.github.com/ReactiveCouchbase/repository/master/releases"
 ```
 
 or if you use the good old `project\Build.scala` file :
@@ -88,7 +89,7 @@ object ApplicationBuild extends Build {
     scalaVersion := "2.11.1",
     organization := "com.foo.bar",
     incOptions := incOptions.value.withNameHashing(true),
-    resolvers += "ReactiveCouchbase repository" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
+    resolvers += "ReactiveCouchbase repository" at "https://raw.github.com/ReactiveCouchbase/repository/master/releases"
   )
 }
 ```

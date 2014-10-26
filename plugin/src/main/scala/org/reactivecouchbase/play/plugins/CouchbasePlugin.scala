@@ -1,7 +1,8 @@
 package org.reactivecouchbase.play.plugins
 
+import akka.actor.ActorSystem
 import play.api._
-import com.typesafe.config.ConfigObject
+import com.typesafe.config.{ConfigFactory, ConfigObject}
 import collection.JavaConversions._
 import org.reactivecouchbase.{ReactiveCouchbaseDriver, CouchbaseBucket}
 import org.reactivecouchbase.play.PlayCouchbase
@@ -10,13 +11,14 @@ import org.reactivecouchbase.client.ReactiveCouchbaseException
 
 class CouchbasePlugin(implicit app: Application) extends Plugin {
 
+  val actorSystem = ActorSystem("reactivecouchbase-plugin-system", app.configuration.getConfig("couchbase.akka").map(_.underlying).getOrElse(ConfigFactory.empty()))
   val logger = Logger("ReactiveCouchbasePlugin")
   var maybeDriver: Option[ReactiveCouchbaseDriver] = None
   var buckets: Map[String, CouchbaseBucket] = Map[String, CouchbaseBucket]()
   override def onStart {
     internalShutdown()
     maybeDriver = Some(ReactiveCouchbaseDriver.apply(
-      PlayCouchbase.couchbaseActorSystem,
+      actorSystem,
       new org.reactivecouchbase.Configuration(Play.configuration(app).underlying),
       PlayCouchbase.loggerFacade,
       app.mode match {

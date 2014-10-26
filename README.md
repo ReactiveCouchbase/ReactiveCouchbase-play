@@ -19,7 +19,7 @@ Contents
 Current version
 ============
 
-* current dev version for Play framework 2.3 is 0.3-SNAPSHOT
+* current dev version for Play framework 2.3 is 0.3
   * https://raw.github.com/ReactiveCouchbase/repository/master/snapshots
 
 Starter Kits
@@ -60,7 +60,7 @@ scalaVersion := "2.11.1"
 libraryDependencies ++= Seq(
   cache,
   ws,
-  "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3-SNAPSHOT"
+  "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3"
 )
 
 resolvers += "ReactiveCouchbase" at "https://raw.github.com/ReactiveCouchbase/repository/master/snapshots"
@@ -82,7 +82,7 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= Seq(
       cache,
       ws,
-      "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3-SNAPSHOT"
+      "org.reactivecouchbase" %% "reactivecouchbase-play" % "0.3"
     ),
     version := "1.0-SNAPSHOT",
     scalaVersion := "2.11.1",

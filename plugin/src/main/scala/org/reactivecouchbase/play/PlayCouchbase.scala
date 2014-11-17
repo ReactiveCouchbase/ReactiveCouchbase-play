@@ -12,7 +12,7 @@ object PlayCouchbase {
 
   private[reactivecouchbase] val usePlayEC = true
   private[reactivecouchbase] val timeout = 1000
-  private[reactivecouchbase] val initMessage = "The CouchbasePlugin has not been initialized! Please edit your conf/play.plugins file and add the following line: '400:package org.reactivecouhbase.play.CouchbasePlugin' (400 is an arbitrary priority and may be changed to match your needs)."
+  private[reactivecouchbase] val initMessage = "The CouchbasePlugin has not been initialized! Please edit your conf/play.plugins file and add the following line: '400:org.reactivecouchbase.play.plugins.CouchbasePlugin' (400 is an arbitrary priority and may be changed to match your needs)."
   private[reactivecouchbase] val connectMessage = "The CouchbasePlugin doesn't seems to be connected to a Couchbase server. Maybe an error occured!"
   private[reactivecouchbase] val loggerFacade = PlayLogger.logger("ReactiveCouchbase")
 

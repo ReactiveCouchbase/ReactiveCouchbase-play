@@ -65,20 +65,40 @@ public class CouchbaseBucket {
         });
     }
 
-    public Promise<OpResult> incr(String key, Integer of) {
-        return Promise.wrap(couchbase.incr(key, of, client, ec));
+    public Promise<Integer> incr(String key, Integer of) {
+        return Promise.wrap(couchbase.incr(key, of, client, ec)).map(new F.Function<Object, Integer>() {
+            @Override
+            public Integer apply(Object o) throws Throwable {
+                return (Integer) o;
+            }
+        });
     }
 
-    public Promise<OpResult> incr(String key, Long of) {
-        return Promise.wrap(couchbase.incr(key, of, client, ec));
+    public Promise<Long> incr(String key, Long of) {
+        return Promise.wrap(couchbase.incr(key, of, client, ec)).map(new F.Function<Object, Long>() {
+            @Override
+            public Long apply(Object o) throws Throwable {
+                return (Long) o;
+            }
+        });
     }
 
-    public Promise<OpResult> decr(String key, Integer of) {
-        return Promise.wrap(couchbase.decr(key, of, client, ec));
+    public Promise<Integer> decr(String key, Integer of) {
+        return Promise.wrap(couchbase.decr(key, of, client, ec)).map(new F.Function<Object, Integer>() {
+            @Override
+            public Integer apply(Object o) throws Throwable {
+                return (Integer) o;
+            }
+        });
     }
 
-    public Promise<OpResult> decr(String key, Long of) {
-        return Promise.wrap(couchbase.decr(key, of, client, ec));
+    public Promise<Long> decr(String key, Long of) {
+        return Promise.wrap(couchbase.decr(key, of, client, ec)).map(new F.Function<Object, Long>() {
+            @Override
+            public Long apply(Object o) throws Throwable {
+                return (Long) o;
+            }
+        });
     }
 
     public Promise<Integer> incrAndGet(String key, Integer of) {

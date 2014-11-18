@@ -28,8 +28,8 @@ case class DocumentDescription(fileName:String, bucket:CouchbaseBucket , bytes:A
 }
 
 object DocumentDescription {
-  def name(name:String, dev:Boolean):String = {
-    if(dev) "dev_"+name else name
+  def name(name:String, dev: Boolean):String = {
+    if (dev) "dev_"+name else name
   }
 }
 

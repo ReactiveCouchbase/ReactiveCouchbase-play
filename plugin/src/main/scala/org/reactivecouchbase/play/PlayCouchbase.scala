@@ -17,7 +17,7 @@ object PlayCouchbase {
   private[reactivecouchbase] val loggerFacade = PlayLogger.logger("ReactiveCouchbase")
 
   def defaultBucket(implicit app: Application): CouchbaseBucket = app.plugin[CouchbasePlugin] match {
-    case Some(plugin) => plugin.buckets.headOption.getOrElse(throw new PlayException("CouchbasePlugin Error", connectMessage))._2
+    case Some(plugin) => CouchbasePlugin.current.helper.buckets.headOption.getOrElse(throw new PlayException("CouchbasePlugin Error", connectMessage))._2
     case _ => throw new PlayException("CouchbasePlugin Error", initMessage)
   }
 
@@ -28,13 +28,13 @@ object PlayCouchbase {
   def client(bucket: String)(implicit app: Application): CouchbaseClient = buckets(app).get(bucket).flatMap(_.client).getOrElse(throw new PlayException(s"Error with bucket $bucket", s"Bucket '$bucket' is not defined or client is not connected"))
 
   def buckets(implicit app: Application): Map[String, CouchbaseBucket] = app.plugin[CouchbasePlugin] match {
-    case Some(plugin) => plugin.buckets
+    case Some(plugin) => CouchbasePlugin.current.helper.buckets
     case _ => throw new PlayException("CouchbasePlugin Error", initMessage)
   }
 
   def couchbaseExecutor(implicit app: Application): ExecutionContext = {
     app.configuration.getObject("couchbase.execution-context.execution-context") match {
-      case Some(_) => app.plugin[CouchbasePlugin].get.actorSystem.dispatcher //couchbaseActorSystem.dispatchers.lookup("couchbase.execution-context.execution-context")
+      case Some(_) => CouchbasePlugin.current.helper.actorSystem.dispatcher //couchbaseActorSystem.dispatchers.lookup("couchbase.execution-context.execution-context")
       case _ => {
         if (usePlayEC)
           play.api.libs.concurrent.Execution.Implicits.defaultContext

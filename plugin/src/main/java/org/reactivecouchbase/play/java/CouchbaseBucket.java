@@ -4,7 +4,7 @@ import com.couchbase.client.protocol.views.Query;
 import com.couchbase.client.protocol.views.View;
 import net.spy.memcached.PersistTo;
 import net.spy.memcached.ReplicateTo;
-import net.spy.memcached.ops.OperationStatus;
+import net.spy.memcached.transcoders.Transcoder;
 import org.reactivecouchbase.Couchbase$;
 import org.reactivecouchbase.client.OpResult;
 import org.reactivecouchbase.client.Row;
@@ -47,6 +47,14 @@ public class CouchbaseBucket {
 
     public Promise<View> view(String docName, String view) {
         return Promise.wrap(couchbase.javaView(docName, view, client, ec));
+    }
+
+    public Promise<String> get(String key) {
+        return Promise.wrap(couchbase.javaGet(key, client, ec));
+    }
+
+    public <T> Promise<T> get(String key, Transcoder<T> tc) {
+        return Promise.wrap(couchbase.javaGet(key, tc, client, ec));
     }
 
     public <T> Promise<T> get(String key, Class<T> clazz) {
@@ -123,6 +131,10 @@ public class CouchbaseBucket {
 
     public <T> Promise<OpResult> set(String key, T value) {
         return Promise.wrap(couchbase.javaSet(key, -1, Json.stringify(Json.toJson(value)), PersistTo.ZERO, ReplicateTo.ZERO, client, ec));
+    }
+
+    public <T> Promise<OpResult> set(String key, int exp, T value, Transcoder<T> tc) {
+        return Promise.wrap(couchbase.javaSet(key, exp, value, tc, client, ec));
     }
 
     public <T> Promise<OpResult> set(String key, int exp, T value) {
